@@ -4,41 +4,80 @@ namespace App\Entity;
 
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: ArticleRepository::class)]
+
+//#[ORM\Entity(repositoryClass: ArticleRepository::class)]
+/**
+ * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ */
 class Article
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    //#[ORM\Id]
+    //#[ORM\GeneratedValue]
+    //#[ORM\Column(type: 'integer')]
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    //#[ORM\Column(type: 'string', length: 255)]
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $title;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    //#[ORM\Column(type: 'string', length: 255)]
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $alias;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    //#[ORM\Column(type: 'string', length: 255)]
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
     private $subtitle;
 
-    #[ORM\Column(type: 'text')]
+    //#[ORM\Column(type: 'text')]
+    /**
+     * @Assert\NotBlank(message="Ce champ ne peut être vide")
+     * @ORM\Column(type="text")
+     */
     private $content;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    //#[ORM\Column(type: 'string', length: 255, nullable: true)]
+     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private $photo;
 
-    #[ORM\Column(type: 'datetime')]
+    //#[ORM\Column(type: 'datetime')]
+    /**
+     * @ORM\Column(type="datetime")
+     */
     private $createdAt;
 
-    #[ORM\Column(type: 'datetime')]
+    //#[ORM\Column(type: 'datetime')]
+    /**
+     * @ORM\Column(type="datetime")
+     */
     private $updatedAt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    //#[ORM\Column(type: 'datetime', nullable: true)]
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     private $deletedAt;
 
-    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    //#[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'articles')]
+    //#[ORM\JoinColumn(nullable: false)]
+    /**
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="articles")
+     * @ORM\JoinColumn(nullable=false)
+     */
     private $category;
 
     public function getId(): ?int
@@ -135,7 +174,7 @@ class Article
         return $this->deletedAt;
     }
 
-    public function setDeletedAt(?\DateTimeInterface $deletedAt): self
+    public function setDeletedAt(?\DateTimeInterface $deletedAt = null): self
     {
         $this->deletedAt = $deletedAt;
 
