@@ -1,0 +1,11 @@
+
+.img-card-custom {
+    object-fit: cover;
+    width: 18rem;
+    height: 20rem;
+}
+
+.img-custom {
+    height: 600px;
+    object-fit: cover;
+}
