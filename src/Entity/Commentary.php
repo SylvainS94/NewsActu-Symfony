@@ -13,8 +13,8 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 class Commentary
 {
     // Un 'trait' est une sorte de classe PHP qui vous sert à réutiliser des propriétés et des Setters et Getters.(propriétés privés)
-    // Cela est utiles lorsque vous avez plusieurs entités qui partagent des propriétés communes.
-    
+    // Cela est utile lorsque vous avez plusieurs entités qui partagent des propriétés communes.
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Pour utiliser ces deux classes PHP, il vous faudra 2 dépendances PHP de Gedmo : composer require gedmo/doctrine-extensions
     // timestamp : c'est une valeur numérique exprimée en secondes qui represente le temps ecoulé (en seconde) depuis le 1er Janv 1970. 00:00
