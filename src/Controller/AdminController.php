@@ -2,16 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Form\ArticleFormType;
 use DateTime;
+use App\Entity\Article;
+use App\Entity\Categorie;
+use App\Entity\User;
+use App\Form\ArticleFormType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/admin")
@@ -21,13 +25,31 @@ class AdminController extends AbstractController
     //#[Route("/admin/tableau-de-bord", name:"show_dashboard", methods:["GET"])]
     /**
      * @Route("/tableau-de-bord", name="show_dashboard", methods={"GET"})
+     * // IsGranted("ROLE_ADMIN") ici cest une autre solution que denyAccessUnlessGranted dans fonction showDashboard ou que modifier le yaml security
      */
     public function showDashboard(EntityManagerInterface $entityManager): Response 
     {
+        // try/catch fait parti de PHP nativement, il permet de gérer les class Exception (erreur).
+        // On se sert d'un try/catch lorqu'on utilise des méthodes (fonctions) QUI LANCENT (throw) une Exception
+        // Si la méthode lance l'erreur pendant son éxécution, alors l'Exception sera 'attrapéé' (catch).
+        // Le code dans les accolades du catch sera alors éxécuté.
+        try{
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        }
+        catch(AccessDeniedException $exception) {
+            $this->addFlash('warning', 'Cette partie du site est réservée.');
+            return $this->redirectToRoute('default_home');
+        }
+        
         $articles = $entityManager->getRepository(Article::class)->findAll();
+        $categories = $entityManager->getRepository(Categorie::class)->findAll();
+        $users =$entityManager->getRepository(User::class)->findAll();
+
         
         return $this->render('admin/show_dashboard.html.twig', [
             'articles'=> $articles,
+            'categories' => $categories,
+            'users' => $users,
         ]); // redirection dans templates (voir en bas)
     }
 
@@ -45,10 +67,14 @@ class AdminController extends AbstractController
         if($form->isSubmitted() && $form->isValid()) {
             // Pour accéder à une valeur d'un input de $form, on fait :
                 // $form->get('title')->getData()
+            
+            // Setting des propriétés non mappées     
             $article->setAlias($slugger->slug($article->getTitle()) ); 
             $article->setCreatedAt(new DateTime());
             $article->setUpdatedAt(new Datetime());
             
+            // Association d'un auteur à un article, getUser() retourne un objet de type UserInterface
+            $article->setAuthor($this->getUser());
             // Variabilisation du fichier 'photo' uploadé.
             $file = $form->get('photo')->getData();
             
