@@ -4,24 +4,44 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class RegisterFormType extends AbstractType
 {
+
+    // Nous déclarons une propriété de class, car la fonction buildForm() ne peut prendre aucune injection de dépendance.
+
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Votre email'
             ])
-            ->add('password', PasswordType::class, [
-                'label' => 'Choisissez un mot de passe'
-            ])
+        ;
+            // Si c'est un update_user, alors on ne rend pas l'input de password. Ce champs est donc réservé à l'inscription / ! = (null === false)
+            if( null=== $this->security->getUser()) {
+               
+                $builder
+                    ->add('password', PasswordType::class, [
+                        'label' => 'Choisissez un mot de passe'
+                    ])
+                ;
+            }
+
+        $builder
             ->add('prenom', TextType::class, [
                 'label' => 'Votre prénom'
             ])
@@ -29,14 +49,15 @@ class RegisterFormType extends AbstractType
                 'label' => 'Votre nom'
             ])
             ->add('submit', SubmitType::class, [
-                'label' => "Je m'inscris",
+                'label' => null === $this->security->getUser() ? "Je m'inscris" : "J'actualise mon compte", // ? = if = pas de user enregistré alors je m'inscris et : = else dans le cas ou il trouve un user par le managerInterface alors on update
                 'validate' => false,
                 'attr' => [
-                    'class' => 'd-block col-2 my-3 mx-auto btn btn-warning'
+                    'class' => 'd-block col-5 my-3 mx-auto btn btn-warning'
                 ]
-            ])
-        ;
-    }
+            ])      
+        ;       
+    } // end fonction buildForm    
+    
 
     public function configureOptions(OptionsResolver $resolver): void
     {

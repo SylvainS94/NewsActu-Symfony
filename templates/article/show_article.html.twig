@@ -49,12 +49,34 @@
             <div class="col-5">
 
                 {% for commentary in commentaries %}
+                    {% if commentary.deletedAt is null %}
+                    
+                        <div class="bg-light shadow my-2">
+                            <p class="ps-3 text-muted">
+                                Crée le: {{ commentary.createdAt | date('d/m/Y | H:i') }} | Écrit par : {{ commentary.author ? commentary.author.prenom ~ ' ' ~ commentary.author.nom : "Pas d'auteur" }}
+                        
+                                {% if commentary.author is same as app.user %}
+                                    <span style="float: right" class="pe-2" onclick="return confirm('Voulez vous archiver ce commentaire ? \nVous retrouverez ces commentaires dans la partie Mes commentaires de votre profil')"> 
+                                        
+                                        {#--------------1ere Façon---------------
+                                         Suite du commentaire de : CommentaryController::softDeleteCommentary()
+                                            Ici nous avons construit grâce au symbole '?' dans le href, apres le {{ path() }}, notre URL avec les arguments nécéssaires pour la redirection (voir CommentaryController)
+                                        <a href="{{ path('soft_delete_commentary', {'id': commentary.id}) }}?cat_alias={{ article.category.alias }}&article_alias={{ article.alias }}&article_id={{ article.id }}" class="text-danger"><i class="fa fa-times-circle"></i></a> 
+                                       
+                                         ---------------2eme Façon---------------
+                                         Suite du commentaire de : CommentaryController::softDeleteCommentary()
+                                             Ici nous avons retiré tous les paramètres dans l'URL. (excépté le paramètre OBLIGATOIRE de la route {id})
+                                         #}
+                                        <a href="{{ path('soft_delete_commentary', {'id': commentary.id}) }}" class="text-danger"><i class="fa fa-times-circle"></i></a>
+                                        {# #}
+                                    </span>
+                                {% endif %}
 
-                    <div class="bg-light shadow my-2">
-                        <p class="ps-3 text-muted">Crée le: {{ commentary.createdAt | date('d/m/Y | H:i') }} | Écrit par : </p>
+                        </p>
                         <p class="ps-3">{{ commentary.comment }}</p>
                     </div>
-
+                    
+                    {% endif %}
                 {% endfor %}
             
             </div>
