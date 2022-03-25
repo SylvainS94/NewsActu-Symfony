@@ -112,4 +112,18 @@ class CommentaryController extends AbstractController
 
     } // End function softDeleteCommentary
 
+    /**
+     * @Route("/restaurer-mon-commentaire/{id}", name="restore_commentary", methods={"GET"})
+     */
+    public function restoreCommentary(Commentary $commentary, EntityManagerInterface $entityManager): Response
+    {
+        $commentary->setDeletedAt(); // (null) 
+
+        $entityManager->persist($commentary);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre commentaire est bien restauré.');
+        return $this->redirectToRoute('show_user_commentaries');
+    }
+
 } // End class CommentaryController

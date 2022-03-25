@@ -35,4 +35,21 @@ class DefaultController extends AbstractController
             'categories' => $categories
         ]);
     }
+
+    /**
+    * @Route("/recherche", name="render_search_bar", methods={"GET|POST"})
+    */
+    public function renderSearchBarInNav(): Response
+    {
+        $form =$this->createForm(SearchFormType::class)->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $query->query = $form->get('query')->getData();
+        }
+
+        return $this->render('rendered/search_bar.html.twig', [
+            
+            'form' => $form->createView()
+         ]);
+    }
 } 
