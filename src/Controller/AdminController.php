@@ -34,13 +34,13 @@ class AdminController extends AbstractController
         // On se sert d'un try/catch lorqu'on utilise des méthodes (fonctions) QUI LANCENT (throw) une Exception
         // Si la méthode lance l'erreur pendant son éxécution, alors l'Exception sera 'attrapéé' (catch).
         // Le code dans les accolades du catch sera alors éxécuté.
-        try{
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        }
-        catch(AccessDeniedException $exception) {
-            $this->addFlash('warning', 'Cette partie du site est réservée.');
-            return $this->redirectToRoute('default_home');
-        }
+        //try{
+        //    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        //}
+        //catch(AccessDeniedException $exception) {
+        //    $this->addFlash('warning', 'Cette partie du site est réservée.');
+        //   return $this->redirectToRoute('default_home');
+        //}
         
         $articles = $entityManager->getRepository(Article::class)->findAll();
         $categories = $entityManager->getRepository(Categorie::class)->findAll();
